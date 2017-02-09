@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+'use strict'
+
+const Exchange = require('../lib/exchange/exchange').Exchange
+const Cache = require('../lib/cache').Cache
+const Server = require('../lib/server').Server
+
+/**
+ * entrypoint function
+ */
+function main () {
+  console.log('Running CryptFind Server (ctrl-c to stop)')
+
+  let cache = new Cache()
+  let exMain = new Exchange()
+  let serv = new Server()
+
+  let fetchLoop = () => {
+    exMain.fetch().then((res) => {
+      cache.add(Date.now(), res)
+    }, (err) => {
+      console.error(err)
+    })
+  }
+
+  let fetchLoopId = setInterval(fetchLoop, 5000)
+  fetchLoop()
+
+  process.on('SIGINT', () => {
+    console.log('shutting down CryptFind Server...')
+    clearInterval(fetchLoopId)
+    cache.sync()
+    cache.destroy()
+    serv.destroy()
+  })
+}
+
+// execute entrypoint
+main()
+

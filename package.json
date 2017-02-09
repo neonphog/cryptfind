@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "name": "cryptfind",
+  "description": "Crypto-currency exchange rate tracker",
+  "main": "lib/main.js",
+  "bin": {
+    "cfserver": "bin/cfserver"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "standard": "^8.6.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/standard \"bin/*\" \"**/*.js\"",
+    "start": "node bin/cfserver"
+  }
+}
