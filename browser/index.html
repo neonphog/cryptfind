@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta title="CryptFind">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link href="stylesheet.css" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>CryptFind <span class="subtitle">: Crypto-Currency Exchange Rate Tracker</span></h1>
+    <p id="loading">loading...</p>
+    <div id="content" style="display:none">
+      <div class="inlinebox">
+        <div class="header">From</div>
+        <div class="radio">
+          <input type="radio" id="from_btc" value="btc" name="from" checked/>
+          <label for="from_btc">BTC</label>
+        </div>
+        <div class="radio">
+          <input type="radio" id="from_eth" value="eth" name="from"/>
+          <label for="from_eth">ETH</label>
+        </div>
+        <div class="radio">
+          <input type="radio" id="from_ltc" value="ltc" name="from"/>
+          <label for="from_ltc">LTC</label>
+        </div>
+        <div class="radio">
+          <input type="radio" id="from_dsh" value="dsh" name="from"/>
+          <label for="from_dsh">DASH</label>
+        </div>
+      </div>
+      <div class="inlinebox">
+        <div class="header">Amount</div>
+        <input type="text" id="amount" value="1.0"/>
+      </div>
+      <div class="inlinebox">
+        <div class="header">To</div>
+        <div class="radio">
+          <input type="radio" id="to_btc" value="btc" name="to"/>
+          <label for="to_btc">BTC</label>
+        </div>
+        <div class="radio">
+          <input type="radio" id="to_eth" value="eth" name="to" checked/>
+          <label for="to_eth">ETH</label>
+        </div>
+        <div class="radio">
+          <input type="radio" id="to_ltc" value="ltc" name="to"/>
+          <label for="to_ltc">LTC</label>
+        </div>
+        <div class="radio">
+          <input type="radio" id="to_dsh" value="dsh" name="to"/>
+          <label for="to_dsh">DASH</label>
+        </div>
+      </div>
+      <hr />
+      <div id="results">
+        <div class="result">
+          <div class="chart">
+          </div>
+          <div class="info">
+            <div class="exchange"></div>
+            <div class="quantity"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="cfclient.js"></script>
+  </body>
+</html>

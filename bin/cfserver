@@ -3,7 +3,7 @@
 
 const Exchange = require('../lib/exchange/exchange').Exchange
 const Cache = require('../lib/cache').Cache
-const Server = require('../lib/server').Server
+const Server = require('../lib/server/server').Server
 
 /**
  * entrypoint function
@@ -13,7 +13,7 @@ function main () {
 
   let cache = new Cache()
   let exMain = new Exchange()
-  let serv = new Server()
+  let serv = new Server(cache)
 
   let fetchLoop = () => {
     exMain.fetch().then((res) => {
