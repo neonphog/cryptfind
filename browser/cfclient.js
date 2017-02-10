@@ -1,6 +1,6 @@
 'use strict'
 
-/* global google */
+/* global google XMLHttpRequest ActiveXObject */
 
 // use google charts as our entrypoint
 google.charts.load('current', {'packages': ['corechart']})
@@ -67,6 +67,7 @@ class CfClient {
     res.querySelector('.quantity').appendChild(
         document.createTextNode(quantity))
     this.resultsDiv.appendChild(res)
+    return [res, res.querySelector('.chart')]
   }
 
   /**
@@ -74,6 +75,7 @@ class CfClient {
   _bindGroup (group) {
     for (let key in group) {
       group[key].addEventListener('change', () => { this._render() }, false)
+      group[key].addEventListener('input', () => { this._render() }, false)
     }
   }
 
@@ -123,9 +125,9 @@ class CfClient {
   /**
    */
   _fetch (fromcoin, tocoin) {
-    let xhr = window.XMLHttpRequest ?
-      new XMLHttpRequest() :
-      new ActiveXObject('Microsoft.XMLHTTP')
+    let xhr = window.XMLHttpRequest
+      ? new XMLHttpRequest()
+      : new ActiveXObject('Microsoft.XMLHTTP')
 
     this.resultsDiv.appendChild(document.createTextNode('fetching data...'))
     xhr.onreadystatechange = () => {
@@ -142,14 +144,48 @@ class CfClient {
   _renderResponse (fromcoin, tocoin, data) {
     this._removeNodes(this.resultsDiv)
     let last = data[0][data[0].length - 1]
+
     if (!last) {
       this.resultsDiv.appendChild(document.createTextNode('no data found'))
       return
     }
+
+    let maxList = []
     for (let item of last[1]) {
-      this._addResult(item.exchange,
+      let resultEl, chartEl
+      [resultEl, chartEl] = this._addResult(item.exchange,
           (parseFloat(this.elemAmount.value) * item.last) + ' ' + tocoin)
+      maxList.push([item.last, resultEl])
+
+      let tab = new google.visualization.DataTable()
+      tab.addColumn('datetime', 'Time')
+      tab.addColumn('number', 'Price')
+
+      for (let row of data[0]) {
+        let time = row[0]
+        for (let exch of row[1]) {
+          if (exch.exchange !== item.exchange) {
+            continue
+          }
+          tab.addRows([[new Date(time), exch.last]])
+        }
+      }
+
+      let chart = new google.visualization.AreaChart(chartEl)
+      chart.draw(tab, {
+      })
     }
+
+    maxList.sort((a, b) => { return b[0] - a[0] })
+    let best = maxList[0]
+    let secondbest = maxList[1]
+    best[1].classList.add('best')
+    let p = best[1].parentNode
+    p.removeChild(best[1])
+    p.insertBefore(best[1], p.childNodes[0])
+    let bestby = parseFloat(this.elemAmount.value) * (best[0] - secondbest[0])
+    best[1].querySelector('.betterby').appendChild(
+        document.createTextNode(`${bestby} ${tocoin} better`))
   }
 }
 

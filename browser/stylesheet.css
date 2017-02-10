@@ -87,6 +87,11 @@ label {
   background-color: #eaedef;
 }
 
+.result.best {
+  background-color: #eaffef;
+  border-color: #88ffaa;
+}
+
 .chart {
   display: inline-block;
   width: 40%;
@@ -108,10 +113,16 @@ label {
   font-size: 150%;
   font-weight: bolder;
   color: #8899aa;
-  margin: .3rem;
+  margin: .1rem .3rem;
 }
 
 .quantity {
   font-size: 130%;
-  margin: .3rem;
+  margin: .05rem .3rem;
 }
+
+.betterby {
+  font-size: 80%;
+  margin: .05rem .3rem;
+}
+

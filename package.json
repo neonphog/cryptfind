@@ -7,8 +7,7 @@
     "cfserver": "bin/cfserver"
   },
   "dependencies": {
-    "mime-db": "^1.26.0",
-    "minimist": "^1.2.0"
+    "mime-db": "^1.26.0"
   },
   "devDependencies": {
     "standard": "^8.6.0"
