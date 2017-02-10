@@ -1,7 +1,7 @@
 {
   "version": "0.0.1",
   "name": "cryptfind",
-  "description": "Crypto-currency exchange rate tracker",
+  "description": "Crypto-Currency Exchange Rate Tracker",
   "main": "lib/main.js",
   "bin": {
     "cfserver": "bin/cfserver"

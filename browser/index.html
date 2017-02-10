@@ -8,8 +8,14 @@
   </head>
   <body>
     <h1>CryptFind <span class="subtitle">: Crypto-Currency Exchange Rate Tracker</span></h1>
+
+    <!-- loading will be removed when google charts loads -->
     <p id="loading">loading...</p>
+
+    <!-- initially hidden, this will be shown when google charts loads -->
     <div id="content" style="display:none">
+
+      <!-- from coin radio buttons -->
       <div class="inlinebox">
         <div class="header">From</div>
         <div class="radio">
@@ -29,10 +35,14 @@
           <label for="from_dsh">DASH</label>
         </div>
       </div>
+
+      <!-- amount input box -->
       <div class="inlinebox">
         <div class="header">Amount</div>
         <input type="text" id="amount" value="1.0"/>
       </div>
+
+      <!-- to coin radio buttons -->
       <div class="inlinebox">
         <div class="header">To</div>
         <div class="radio">
@@ -52,7 +62,10 @@
           <label for="to_dsh">DASH</label>
         </div>
       </div>
+
       <hr />
+
+      <!-- this results section is extracted on load and used as a template -->
       <div id="results">
         <div class="result">
           <div class="chart">
@@ -64,7 +77,10 @@
           </div>
         </div>
       </div>
+
     </div>
+
+    <!-- bottom loaded script, main client entrypoint -->
     <script type="text/javascript" src="cfclient.js"></script>
   </body>
 </html>

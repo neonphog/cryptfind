@@ -1,0 +1,45 @@
+
+{
+
+  "#": "Default cfserver config json file",
+
+  "#": "'exchanges' group - configure settings related to exchange polling",
+  "exchanges": {
+
+    "#": "how frequently to poll exchanges - in milliseconds",
+    "pollFrequency": 60000, "#": "every 1 minute",
+
+    "#": "which exchange modules to poll",
+    "exchangeList": [
+      "bleutrade",
+      "bittrex",
+      "btce",
+      "poloniex"
+    ]
+
+  },
+
+  "#": "'server' group - configure settings related to web/api server",
+  "server": {
+
+    "#": "port the http server should use",
+    "port": 18080
+
+  },
+
+  "#": "'cache' group - configure settings for data history",
+  "cache": {
+
+    "#": "file path for cache disk storage",
+    "cacheFileName": ".cryptfindcache",
+
+    "#": "how often to sync to disk - in milliseconds",
+    "diskSyncFrequency": 5000, "#": "every 5 seconds",
+
+    "#": "how many historical entries should the cache retain",
+    "keepCount": 200
+
+  }
+
+}
+

@@ -10,17 +10,22 @@ google.charts.setOnLoadCallback(() => {
 })
 
 /**
+ * This class encapsulates the client logic
  */
 class CfClient {
   /**
+   * fetch and bind html elements && trigger initial render
    */
   init () {
+    // hide loading div
     let elemLoading = document.getElementById('loading')
     elemLoading.style.display = 'none'
 
+    // show content div
     let elemContent = document.getElementById('content')
     elemContent.style.display = 'block'
 
+    // get elements by ids and bind events
     this.elemAmount = document.getElementById('amount')
     this._bindGroup([this.elemAmount])
 
@@ -42,13 +47,19 @@ class CfClient {
 
     this.resultsDiv = document.getElementById('results')
 
+    // fetch the result elements for use as a template
     this.resultTemplate = this.resultsDiv.querySelector('.result').innerHTML
+
+    // clear the template
     this._removeNodes(this.resultsDiv)
 
+    // trigger initial render
     this._render()
   }
 
   /**
+   * Given an element, erase all its children
+   * @private
    */
   _removeNodes (elem) {
     while (elem.childNodes.length) {
@@ -57,6 +68,11 @@ class CfClient {
   }
 
   /**
+   * Using the previously fetched template, generate a results box
+   * @private
+   * @param {string} exchange - name of exchange
+   * @param {string} quantity - value of coins after exchange
+   * @return {Array} index 0 is result div, index 1 is chart div
    */
   _addResult (exchange, quantity) {
     let res = document.createElement('div')
@@ -71,6 +87,9 @@ class CfClient {
   }
 
   /**
+   * bind cange and input events to render from an object of html elements
+   * @private
+   * @param {Object} values are html elements
    */
   _bindGroup (group) {
     for (let key in group) {
@@ -80,6 +99,9 @@ class CfClient {
   }
 
   /**
+   * For an object who's keys are radio buttons in a group, find the checked one
+   * @private
+   * @param {Object} values are html element radio buttons
    */
   _getChecked (group) {
     for (let key in group) {
@@ -90,14 +112,22 @@ class CfClient {
   }
 
   /**
+   * Make sure both radio button groups are sane, then trigger api fetch
+   * @private
    */
   _render () {
+    // if there isn't a checked item, check the first
     if (!this._getChecked(this.radioFrom)) {
       this.radioFrom['btc'].checked = true
     }
     let from = this._getChecked(this.radioFrom)
+
     let firstVis = null
     let hasChecked = false
+
+    // sort through the second group, make sure none of them match
+    // the selected one from the first group. make sure at least one
+    // of the second group is checked
     for (let key in this.radioTo) {
       if (key === from) {
         this.radioTo[key].parentNode.style.display = 'none'
@@ -111,81 +141,119 @@ class CfClient {
         }
       }
     }
+
+    // if the second group didn't have a visible and selected - select one
     if (!hasChecked) {
       firstVis.checked = true
     }
 
+    // delete any previous result nodes
     this._removeNodes(this.resultsDiv)
 
+    // make an api request given the selected options
     this._fetch(
         this._getChecked(this.radioFrom),
         this._getChecked(this.radioTo))
   }
 
   /**
+   * Make an API request given two keys for a trading pair
+   * @private
+   * @param {string} fromcoin - first coin
+   * @param {string} tocoin - second coin
    */
   _fetch (fromcoin, tocoin) {
+    // get xhr instance
     let xhr = window.XMLHttpRequest
       ? new XMLHttpRequest()
       : new ActiveXObject('Microsoft.XMLHTTP')
 
+    // user indication
     this.resultsDiv.appendChild(document.createTextNode('fetching data...'))
+
+    // on data recieved
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4 && xhr.status === 200) {
         this._renderResponse(fromcoin, tocoin, JSON.parse(xhr.responseText))
       }
     }
-    xhr.open('GET', '/api/v1?q=' + fromcoin + '-' + tocoin, true)
+
+    // send the request
+    xhr.open('GET', '/api/v1/historyforpair?q=' + fromcoin + '-' + tocoin, true)
     xhr.send(null)
   }
 
   /**
+   * Callback invoked when we receive api xhr data
+   * We want to populate screen with result boxes
+   *
+   * @private
+   * @param {string} fromcoin - first coin
+   * @param {string} tocoin - second coin
+   * @param {Object} data - data received from the request
    */
   _renderResponse (fromcoin, tocoin, data) {
+    // clear the 'requesting data' indication
     this._removeNodes(this.resultsDiv)
-    let last = data[0][data[0].length - 1]
 
-    if (!last) {
+    // we only made 1 `q=` request... use the first one
+    data = data[0]
+
+    // if we didn't get any data, tell the user
+    if (!Object.keys(data).length) {
       this.resultsDiv.appendChild(document.createTextNode('no data found'))
       return
     }
 
+    // loop through exchanges in data
     let maxList = []
-    for (let item of last[1]) {
-      let resultEl, chartEl
-      [resultEl, chartEl] = this._addResult(item.exchange,
-          (parseFloat(this.elemAmount.value) * item.last) + ' ' + tocoin)
-      maxList.push([item.last, resultEl])
+    for (let exchange in data) {
+      let arr = data[exchange]
+      let last = arr[arr.length - 1].last
 
+      // create a result box for each exchange
+      let resultEl, chartEl
+      ;[resultEl, chartEl] = this._addResult(exchange,
+          (parseFloat(this.elemAmount.value) * last) + ' ' + tocoin)
+      maxList.push([last, resultEl])
+
+      // create a new chart data table for this exchange
       let tab = new google.visualization.DataTable()
       tab.addColumn('datetime', 'Time')
       tab.addColumn('number', 'Price')
 
-      for (let row of data[0]) {
-        let time = row[0]
-        for (let exch of row[1]) {
-          if (exch.exchange !== item.exchange) {
-            continue
-          }
-          tab.addRows([[new Date(time), exch.last]])
-        }
+      // fill up the chart data table with data
+      for (let row of arr) {
+        tab.addRows([[new Date(row.time), row.last]])
       }
 
+      // generate the chart
       let chart = new google.visualization.AreaChart(chartEl)
       chart.draw(tab, {
+        width: chartEl.clientWidth,
+        height: chartEl.clientHeight,
+        hAxis: { textPosition: 'none' },
+        legend: 'none'
       })
     }
 
+    // sort the list of last trades highest to lowest
     maxList.sort((a, b) => { return b[0] - a[0] })
     let best = maxList[0]
     let secondbest = maxList[1]
+
+    // mark the best exchange result box- will be green in css
     best[1].classList.add('best')
+
+    // move it to the top of the list
     let p = best[1].parentNode
     p.removeChild(best[1])
     p.insertBefore(best[1], p.childNodes[0])
+
+    // let the user know how much better this exchange is
     let bestby = parseFloat(this.elemAmount.value) * (best[0] - secondbest[0])
     best[1].querySelector('.betterby').appendChild(
-        document.createTextNode(`${bestby} ${tocoin} better`))
+        document.createTextNode(`${bestby} ${tocoin} above next best`))
   }
 }
 
