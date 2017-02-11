@@ -216,7 +216,8 @@ class CfClient {
     }
 
     // find global min / max for chart bounds
-    let gmin = null, gmax = null
+    let gmin = null
+    let gmax = null
     for (let exchange in data) {
       let arr = data[exchange]
       for (let row of arr) {
