@@ -56,25 +56,24 @@ input {
 }
 
 input[type=radio] {
-  width: 46%;
   display: inline-block;
   cursor: pointer;
   height: 1.2rem;
+  width: 1.2rem;
 }
 
 label {
-  width: 50%;
-  float: right;
   display: inline-block;
   cursor: pointer;
-  height: 1.4rem;
-  padding-top: .3rem;
-  vertical-align: middle;
+  margin-top: .4rem;
+  vertical-align: top;
 }
 
 .radio {
   background-color: #cacdef;
   margin: .3rem;
+  text-align: center;
+  cursor: pointer;
 }
 
 /* -- results -- */
@@ -89,7 +88,11 @@ label {
 
 .result.best {
   background-color: #eaffef;
-  border-color: #88ffaa;
+  border-color: #44aa00;
+}
+
+.result.best .exchange {
+  color: #44aa00;
 }
 
 .chart {

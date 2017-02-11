@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta title="CryptFind">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+function doSelect(id) {
+  let e = document.getElementById(id)
+  e.checked = true
+  e.dispatchEvent(new Event('change'))
+}
+    </script>
     <link href="stylesheet.css" rel="stylesheet" />
   </head>
   <body>
@@ -18,19 +25,19 @@
       <!-- from coin radio buttons -->
       <div class="inlinebox">
         <div class="header">From</div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('from_btc')">
           <input type="radio" id="from_btc" value="btc" name="from" checked/>
           <label for="from_btc">BTC</label>
         </div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('from_eth')">
           <input type="radio" id="from_eth" value="eth" name="from"/>
           <label for="from_eth">ETH</label>
         </div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('from_ltc')">
           <input type="radio" id="from_ltc" value="ltc" name="from"/>
           <label for="from_ltc">LTC</label>
         </div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('from_dsh')">
           <input type="radio" id="from_dsh" value="dsh" name="from"/>
           <label for="from_dsh">DASH</label>
         </div>
@@ -45,19 +52,19 @@
       <!-- to coin radio buttons -->
       <div class="inlinebox">
         <div class="header">To</div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('to_btc')">
           <input type="radio" id="to_btc" value="btc" name="to"/>
           <label for="to_btc">BTC</label>
         </div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('to_eth')">
           <input type="radio" id="to_eth" value="eth" name="to" checked/>
           <label for="to_eth">ETH</label>
         </div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('to_ltc')">
           <input type="radio" id="to_ltc" value="ltc" name="to"/>
           <label for="to_ltc">LTC</label>
         </div>
-        <div class="radio">
+        <div class="radio" onclick="doSelect('to_dsh')">
           <input type="radio" id="to_dsh" value="dsh" name="to"/>
           <label for="to_dsh">DASH</label>
         </div>

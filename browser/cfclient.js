@@ -55,6 +55,16 @@ class CfClient {
 
     // trigger initial render
     this._render()
+
+    let resizeDebounce = null
+    window.addEventListener('resize', () => {
+      this._removeNodes(this.resultsDiv)
+
+      clearTimeout(resizeDebounce)
+      resizeDebounce = setTimeout(() => {
+        this._render()
+      }, 300)
+    })
   }
 
   /**
@@ -205,6 +215,20 @@ class CfClient {
       return
     }
 
+    // find global min / max for chart bounds
+    let gmin = null, gmax = null
+    for (let exchange in data) {
+      let arr = data[exchange]
+      for (let row of arr) {
+        if (gmin === null || row.last < gmin) {
+          gmin = row.last
+        }
+        if (gmax === null || row.last > gmax) {
+          gmax = row.last
+        }
+      }
+    }
+
     // loop through exchanges in data
     let maxList = []
     for (let exchange in data) {
@@ -233,6 +257,13 @@ class CfClient {
         width: chartEl.clientWidth,
         height: chartEl.clientHeight,
         hAxis: { textPosition: 'none' },
+        vAxis: {
+          viewWindowMode: 'explicit',
+          viewWindow: {
+            max: gmax,
+            min: gmin
+          }
+        },
         legend: 'none'
       })
     }
