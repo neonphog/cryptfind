@@ -2,7 +2,6 @@
   "version": "0.0.1",
   "name": "cryptfind",
   "description": "Crypto-Currency Exchange Rate Tracker",
-  "main": "lib/main.js",
   "bin": {
     "cfserver": "bin/cfserver"
   },
@@ -10,10 +9,11 @@
     "mime-db": "^1.26.0"
   },
   "devDependencies": {
-    "standard": "^8.6.0"
+    "standard": "^8.6.0",
+    "mocha": "^3.2.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/standard \"bin/*\" \"**/*.js\"",
+    "test": "standard \"bin/*\" \"**/*.js\" && mocha \"test/main.js\"",
     "start": "node bin/cfserver"
   }
 }

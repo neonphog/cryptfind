@@ -215,11 +215,13 @@ class CfClient {
       return
     }
 
-    // find global min / max for chart bounds
+    // build sort array && find global min / max for chart bounds
+    let sortList = []
     let gmin = null
     let gmax = null
     for (let exchange in data) {
       let arr = data[exchange]
+      sortList.push([exchange, arr, arr[arr.length - 1].last])
       for (let row of arr) {
         if (gmin === null || row.last < gmin) {
           gmin = row.last
@@ -229,18 +231,19 @@ class CfClient {
         }
       }
     }
+    sortList.sort((a, b) => { return b[2] - a[2] })
 
-    // loop through exchanges in data
-    let maxList = []
-    for (let exchange in data) {
-      let arr = data[exchange]
-      let last = arr[arr.length - 1].last
+    // loop through sorted data
+    for (let item of sortList) {
+      let exchange = item[0]
+      let arr = item[1]
+      let last = item[2]
 
       // create a result box for each exchange
       let resultEl, chartEl
       ;[resultEl, chartEl] = this._addResult(exchange,
           (parseFloat(this.elemAmount.value) * last) + ' ' + tocoin)
-      maxList.push([last, resultEl])
+      item.push(resultEl)
 
       // create a new chart data table for this exchange
       let tab = new google.visualization.DataTable()
@@ -269,22 +272,15 @@ class CfClient {
       })
     }
 
-    // sort the list of last trades highest to lowest
-    maxList.sort((a, b) => { return b[0] - a[0] })
-    let best = maxList[0]
-    let secondbest = maxList[1]
+    let best = sortList[0]
+    let secondbest = sortList[1]
 
     // mark the best exchange result box- will be green in css
-    best[1].classList.add('best')
-
-    // move it to the top of the list
-    let p = best[1].parentNode
-    p.removeChild(best[1])
-    p.insertBefore(best[1], p.childNodes[0])
+    best[3].classList.add('best')
 
     // let the user know how much better this exchange is
-    let bestby = parseFloat(this.elemAmount.value) * (best[0] - secondbest[0])
-    best[1].querySelector('.betterby').appendChild(
+    let bestby = parseFloat(this.elemAmount.value) * (best[2] - secondbest[2])
+    best[3].querySelector('.betterby').appendChild(
         document.createTextNode(`${bestby} ${tocoin} above next best`))
   }
 }
